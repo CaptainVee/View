@@ -71,6 +71,7 @@ class RetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 class LessonListCreateView(ListCreateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+
     def get(self, request, *args, **kwargs):
         queryset = Lesson.objects.filter(course = request.query_params['course_pk'])
         serializer = LessonSerializer(queryset, many=True)
@@ -83,7 +84,7 @@ class OrderListView(ListAPIView):
             serializer = OrderSerializer(queryset, many=True)
             return Response(serializer.data)
         except ObjectDoesNotExist:
-            return Response(serializer.data)
+            return Response(serializer.errors)
 
 
 class StartDetailView(ListAPIView):
@@ -98,7 +99,7 @@ class StartDetailView(ListAPIView):
 
 
 class AddtoCartView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         item = get_object_or_404(Post, pk=request.query_params['pk'])
@@ -128,7 +129,7 @@ class AddtoCartView(APIView):
             return Response(context)
 
 class RemoveFromCartView(APIView):
-    permission_classes = (IsAuthenticated, )
+    # permission_classes = (IsAuthenticated, )
 
     def post(self, request, *args, **kwargs):
         item = get_object_or_404(Post, pk=request.query_params['pk'])
@@ -158,7 +159,7 @@ class RemoveFromCartView(APIView):
             return Response(context)
 
 class PaymentListView(APIView):
-    permission_classes = (IsAuthenticated, ) 
+    # permission_classes = (IsAuthenticated, ) 
 
     def get(self, request, *args, **kwargs):
         queryset = Order.objects.filter(user=request.user, ordered=False)

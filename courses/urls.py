@@ -15,8 +15,8 @@ from .views import(
 urlpatterns = [
 path('api/enroll/', EnrollView.as_view(), name='enroll'),
 path('api/course/', CourseCreateView.as_view(), name='course-create'),
-path('api/detail/<int:pk>/', RetrieveUpdateDestroyView.as_view(), name='course-detail'),
-path('api/courses/', CourseListView.as_view(), name='courses-api'),
+path('api/course-detail/<int:pk>/', RetrieveUpdateDestroyView.as_view(), name='course-detail'),
+path('api/courses-list/', CourseListView.as_view(), name='courses-api'),
 path('api/lesson/', LessonListCreateView.as_view(), name='lesson-create'),
 path('api/order-summary/', OrderListView.as_view(), name='order-summary'),
 path('api/add-to-cart/', AddtoCartView.as_view(), name='add-to-cart'),
