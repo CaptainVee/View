@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
 from django.contrib.auth.models import User
-from .models import Post, OrderItem, Order, Address, UserProfile, Lesson
+from .models import Post, OrderItem, Order, Address, Lesson
 from django.urls import reverse
 from user.models import Profile
 from django.http import JsonResponse

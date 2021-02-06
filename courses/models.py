@@ -73,12 +73,12 @@ class Lesson(models.Model):
 
 
 
-class UserProfile(models.Model):
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
-	one_click_purchasing = models.BooleanField(default=False)
+# class UserProfile(models.Model):
+# 	user = models.OneToOneField(User, on_delete=models.CASCADE)
+# 	one_click_purchasing = models.BooleanField(default=False)
 
-	def __str__(self):
-		return self.user.username
+# 	def __str__(self):
+# 		return self.user.username
 
 
 
@@ -144,9 +144,9 @@ class Address(models.Model):
 	class Meta:
 	    verbose_name_plural = 'Addresses'
 
-def userprofile_receiver(sender, instance, created, *args, **kwargs):
-    if created:
-        userprofile = UserProfile.objects.create(user=instance)
+# def userprofile_receiver(sender, instance, created, *args, **kwargs):
+#     if created:
+#         userprofile = UserProfile.objects.create(user=instance)
 
 
-post_save.connect(userprofile_receiver, sender=User)
+# post_save.connect(userprofile_receiver, sender=User)

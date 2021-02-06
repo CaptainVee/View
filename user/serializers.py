@@ -10,7 +10,31 @@ from django.contrib.auth.models import User
 from user.models import Profile
 
 
+class UserDetailSerializer(ModelSerializer):
+	user = SerializerMethodField()
+	email = SerializerMethodField()
+	class Meta:		
+		model = Profile
+		fields = ('user', 'image', 'email', 'is_instructor')
 
+	def get_user(self, obj):
+		return (obj.user.username)
+
+	def get_email(self, obj):
+		return (obj.user.email)
+
+class StudentDetailSerializer(ModelSerializer):
+	user = SerializerMethodField()
+	email = SerializerMethodField()
+	class Meta:		
+		model = Profile
+		fields = ('user', 'image', 'email')
+
+	def get_user(self, obj):
+		return (obj.user.username)
+
+	def get_email(self, obj):
+		return (obj.user.email)
 
 # class UserCreateSerializer(ModelSerializer):
 # 	email = EmailField(label='Email')
@@ -58,28 +82,3 @@ from user.models import Profile
 # 	# 	return data
 
 
-class UserDetailSerializer(ModelSerializer):
-	user = SerializerMethodField()
-	email = SerializerMethodField()
-	class Meta:		
-		model = Profile
-		fields = ('user', 'image', 'email', 'is_instructor')
-
-	def get_user(self, obj):
-		return (obj.user.username)
-
-	def get_email(self, obj):
-		return (obj.user.email)
-
-class StudentDetailSerializer(ModelSerializer):
-	user = SerializerMethodField()
-	email = SerializerMethodField()
-	class Meta:		
-		model = Profile
-		fields = ('user', 'image', 'email')
-
-	def get_user(self, obj):
-		return (obj.user.username)
-
-	def get_email(self, obj):
-		return (obj.user.email)
