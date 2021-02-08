@@ -11,7 +11,7 @@ class CourseListSerializer(ModelSerializer):
 	class Meta:
 		model = Post
 		fields = (
-			'url','title', 'content', 'author', 'price', 'image'
+			'url','title', 'content', 'author', 'price', 'image', 'category'
 			)
 	def get_author(self, obj):
 		return (obj.author.user.username)
