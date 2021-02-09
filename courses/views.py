@@ -12,6 +12,7 @@ from paystackapi.paystack import Paystack
 from .pagination import CourseLimitOffsetPagination
 from django.http import JsonResponse
 
+
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
@@ -58,7 +59,7 @@ class CourseCreateView(CreateAPIView):
     queryset = Post.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(author=self.request.user.profile)
 
 
 class RetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):

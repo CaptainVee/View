@@ -7,19 +7,21 @@ from django.db.models.signals import post_save
 from django.db.models import Sum
 from django.shortcuts import reverse
 from django_countries.fields import CountryField
+from multiselectfield import MultiSelectField
+from rest_framework import fields
 # Create your models here.
 
 CATEGORY_CHOICES = (
-    ('A', 'IT and Software'),
-    ('B', 'Design'),
-    ('C', 'Personal Development')
-    ('D', 'Marketing'),
-    ('E', 'Music'),
-    ('F', 'Cloud')
+    (1, 'IT and Software'),
+    (2, 'Design'),
+    (3, 'Personal Development'),
+    (4, 'Marketing'),
+    (5, 'Music'),
+    (6, 'Cloud')
 )
 
 LABEL_CHOICES = (
-    ('P', 'primary'),
+    ('P', 'Best-seller'),
     ('S', 'secondary'),
     ('D', 'danger')
 )
@@ -31,8 +33,8 @@ ADDRESS_CHOICES = (
 
 class Post(models.Model):
 	title = models.CharField(max_length=150 )
-	category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
 	label = models.CharField(choices=LABEL_CHOICES, max_length=1)
+	my_field2 = MultiSelectField(choices=CATEGORY_CHOICES, max_choices=3, max_length=2)
 	content = models.TextField()
 	date_posted = models.DateTimeField(default=timezone.now)
 	author = models.ForeignKey(Profile, on_delete= models.CASCADE)

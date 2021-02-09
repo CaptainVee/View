@@ -2,5 +2,5 @@ from rest_framework.pagination import LimitOffsetPagination, PageNumberPaginatio
 
 
 class CourseLimitOffsetPagination(LimitOffsetPagination):
-	default_limit = 2
+	default_limit = 10
 	max_limit = 10
