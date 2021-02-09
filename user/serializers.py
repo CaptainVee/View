@@ -8,20 +8,29 @@ from rest_framework.serializers import (
 
 from django.contrib.auth.models import User
 from user.models import Profile
+from courses.models import Post
+from courses.serializers import PostSerializer
 
 
 class UserDetailSerializer(ModelSerializer):
 	user = SerializerMethodField()
 	email = SerializerMethodField()
+	courses = SerializerMethodField()
+
 	class Meta:		
 		model = Profile
-		fields = ('user', 'image', 'email', 'is_instructor')
+		fields = ('user', 'image', 'email', 'is_instructor', 'courses')
 
 	def get_user(self, obj):
 		return (obj.user.username)
 
 	def get_email(self, obj):
 		return (obj.user.email)
+
+	def get_courses(self, obj):
+		post_qs = Profile.posts
+		posts = PostSerializer(post_qs, many=True).data
+		return posts
 
 class StudentDetailSerializer(ModelSerializer):
 	user = SerializerMethodField()

@@ -38,20 +38,8 @@ class CourseListView(ListAPIView):
     serializer_class = CourseListSerializer
     queryset = Post.objects.all()
     pagination_class = CourseLimitOffsetPagination
-    # filter_backends = [SearchFilter, OrderingFilter]
-    # serch_fields = ['title', 'content','user__first_name' ]
-
-    # def get_queryset(self, *args, **kwargs):
-    #     queryset_list = Post.objects.all()
-    #     query = self.request.GET.get("q")
-    #     if query:
-    #         queryset_list = queryset_list.filter(
-    #                 Q(title__icontains=query)|
-    #                 Q(content__icontains=query)|
-    #                 Q(user__first_name__icontains=query)|
-    #                 Q(user__last_name__icontains=query)
-    #                 ).distinct()
-
+    filter_backends = [SearchFilter]
+    search_fields = ['title', 'content', 'author__user__username']
 
 
 class CourseCreateView(CreateAPIView):
@@ -59,6 +47,7 @@ class CourseCreateView(CreateAPIView):
     queryset = Post.objects.all()
 
     def perform_create(self, serializer):
+        ''' this function is to make the author to be the person requesting it'''
         serializer.save(author=self.request.user.profile)
 
 
@@ -211,35 +200,11 @@ class EnrollView(APIView):
 
 #         return JsonResponse(response, safe=False)
 
-# class PostView(APIView):
-#     permission_classes = (IsAuthenticated)
-
-#     def get(self, request, *args, **kwargs):
-#         qwery_set = Post.objects.all()
-#         serializer = PostSerializer(qwery_set, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request, *args, **kwargs):
-#         serializer = PostSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-
-#         return Response(serializer.errors)
 
 # class UserPostDetailView(View):
 #     model = InstructorProfile
 #     template_name = 'courses/instructor_detail.html'
 
-# class PostDeleteView(LoginRequiredMixin, DeleteView):
-#     model = Post
-#     success_url = '/'
-
-#     def test_func(self):
-#         post = self.get_object()
-#         if self.request.user == post.author:
-#             return True
-#         return False
 
 
 

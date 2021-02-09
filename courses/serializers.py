@@ -11,10 +11,11 @@ from rest_framework import fields, serializers
 class CourseListSerializer(ModelSerializer):
 	url = HyperlinkedIdentityField(view_name='course-detail', lookup_field='pk')
 	author = SerializerMethodField()
+	author_profile = HyperlinkedIdentityField(view_name='profile', lookup_field='pk')
 	class Meta:
 		model = Post
 		fields = (
-			'url','title', 'content', 'author', 'price', 'image', 'my_field2'
+			'url','title', 'content', 'author', 'price', 'image', 'my_field2', 'author_profile'
 			)
 	def get_author(self, obj):
 		return (obj.author.user.username)
@@ -23,10 +24,6 @@ class CourseListSerializer(ModelSerializer):
 class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
 	my_field2 = fields.MultipleChoiceField(CATEGORY_CHOICES)
 	author = serializers.PrimaryKeyRelatedField(read_only=True)
-	# url = HyperlinkedIdentityField(view_name='course-detail', lookup_field='pk')
-	# author = SerializerMethodField()
-	# author = SerializerMethodField()
-	# author = HyperlinkedRelatedField(view_name='profile',lookup_field='username')
 	class Meta:
 		model = Post
 		fields = (
@@ -46,7 +43,12 @@ class OrderSerializer(ModelSerializer):
 		fields = (
 			'user', 'ordered', 'items',
 			)
-		
+class PostSerializer(ModelSerializer):
+	class Meta:
+		model = Post
+		fields = (
+			'title'
+			)	
 
 class OrderItemSerializer(ModelSerializer):
 	class Meta:
