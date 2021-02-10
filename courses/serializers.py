@@ -4,7 +4,7 @@ from rest_framework.serializers import (
 	HyperlinkedModelSerializer,
 	SerializerMethodField)
 from rest_framework import fields
-from .models import Post, Lesson, OrderItem, Order, CATEGORY_CHOICES, LABEL_CHOICES
+from .models import Post, Lesson, OrderItem, Order, TAGS, LABEL_CHOICES
 from django.contrib.auth.models import User
 from rest_framework import fields, serializers
 
@@ -15,19 +15,19 @@ class CourseListSerializer(ModelSerializer):
 	class Meta:
 		model = Post
 		fields = (
-			'url','title', 'content', 'author', 'price', 'image', 'my_field2', 'author_profile'
+			'url','title', 'content', 'author', 'price', 'image', 'tags', 'author_profile'
 			)
 	def get_author(self, obj):
 		return (obj.author.user.username)
 
 
 class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
-	my_field2 = fields.MultipleChoiceField(CATEGORY_CHOICES)
+	tags = fields.MultipleChoiceField(TAGS)
 	author = serializers.PrimaryKeyRelatedField(read_only=True)
 	class Meta:
 		model = Post
 		fields = (
-		'title', 'content', 'price', 'image', 'author', 'my_field2'
+		'title', 'content', 'price', 'image', 'author', 'tags'
 		)
 
 class LessonSerializer(ModelSerializer):
@@ -43,12 +43,12 @@ class OrderSerializer(ModelSerializer):
 		fields = (
 			'user', 'ordered', 'items',
 			)
-class PostSerializer(ModelSerializer):
-	class Meta:
-		model = Post
-		fields = (
-			'title'
-			)	
+# class PostSerializer(ModelSerializer):
+# 	class Meta:
+# 		model = Post
+# 		fields = (
+# 			'title'
+# 			)	
 
 class OrderItemSerializer(ModelSerializer):
 	class Meta:

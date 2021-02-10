@@ -11,7 +11,7 @@ from multiselectfield import MultiSelectField
 from rest_framework import fields
 # Create your models here.
 
-CATEGORY_CHOICES = (
+TAGS = (
     (1, 'IT and Software'),
     (2, 'Design'),
     (3, 'Personal Development'),
@@ -33,15 +33,17 @@ ADDRESS_CHOICES = (
 
 class Post(models.Model):
 	title = models.CharField(max_length=150 )
-	label = models.CharField(choices=LABEL_CHOICES, max_length=1)
-	my_field2 = MultiSelectField(choices=CATEGORY_CHOICES, max_choices=3, max_length=2)
+	course_type = models.CharField(choices=LABEL_CHOICES, max_length=1)
+	tags = MultiSelectField(choices=TAGS, max_length=2)
 	content = models.TextField()
-	date_posted = models.DateTimeField(default=timezone.now)
+	caption = models.CharField(max_length=300)
+	created_at = models.DateTimeField(default=timezone.now)
+	updated_at = models.DateTimeField()
 	author = models.ForeignKey(Profile, on_delete= models.CASCADE)
 	price = models.FloatField()
 	free = models.BooleanField(default=False)
 	discount_price = models.FloatField(blank=True, null=True)
-	image = models.ImageField(default='default.jpg', null=True, blank=True)
+	cover_photo = models.ImageField(default='default.jpg', null=True, blank=True)
 
 
 
@@ -60,6 +62,12 @@ class Post(models.Model):
 	def lessons(self):
 		return self.lesson_set.all().order_by('position')
 
+# class CourseMeta(models.Model):
+# 	pass
+
+# class CourseConfig(models.Model):
+# 	pass
+
 class Lesson(models.Model):
 	title = models.CharField(max_length=120)
 	course = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -76,14 +84,22 @@ class Lesson(models.Model):
 			kwargs={'course_pk':self.course.pk, 'lesson_pk':self.pk})
 
 
+class Resourse(models.Model):
+	pass
 
 
-# class UserProfile(models.Model):
-# 	user = models.OneToOneField(User, on_delete=models.CASCADE)
-# 	one_click_purchasing = models.BooleanField(default=False)
 
-# 	def __str__(self):
-# 		return self.user.username
+
+
+class Reviews(models.Model):
+	'''this model is for reviews about the course'''
+	created_at = models.DateTimeField(default=timezone.now)
+	created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+	updated_at = models.DateTimeField()
+	body = models.TextField()
+
+	def __str__(self):
+		return self.created_by.username
 
 
 
