@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
 from django.contrib.auth.models import User
-from .models import Post, OrderItem, Order, Address, Lesson
+from .models import Course, OrderItem, Order, Address, Lesson
 from django.urls import reverse
 from user.models import Profile
 from django.http import JsonResponse
@@ -36,15 +36,15 @@ from .serializers import (
 
 class CourseListView(ListAPIView):
     serializer_class = CourseListSerializer
-    queryset = Post.objects.all()
+    queryset = Course.objects.all()
     pagination_class = CourseLimitOffsetPagination
     filter_backends = [SearchFilter]
-    search_fields = ['title', 'content', 'author__user__username']
+    search_fields = ['title', 'content', 'author__user__username', 'caption', 'tags']
 
 
 class CourseCreateView(CreateAPIView):
     serializer_class = CourseDetailSerializer
-    queryset = Post.objects.all()
+    queryset = Course.objects.all()
 
     def perform_create(self, serializer):
         ''' this function is to make the author to be the person requesting it'''
@@ -53,7 +53,7 @@ class CourseCreateView(CreateAPIView):
 
 class RetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = CourseDetailSerializer
-    queryset = Post.objects.all()
+    queryset = Course.objects.all()
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
@@ -92,7 +92,7 @@ class AddtoCartView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        item = get_object_or_404(Post, pk=request.query_params['pk'])
+        item = get_object_or_404(Course, pk=request.query_params['pk'])
         order_item, created = OrderItem.objects.get_or_create(
             item=item,
             user=request.user,
@@ -122,7 +122,7 @@ class RemoveFromCartView(APIView):
     # permission_classes = (IsAuthenticated, )
 
     def post(self, request, *args, **kwargs):
-        item = get_object_or_404(Post, pk=request.query_params['pk'])
+        item = get_object_or_404(Course, pk=request.query_params['pk'])
         order_qs = Order.objects.filter(
             user=request.user,
             ordered=False
@@ -164,7 +164,7 @@ class PaymentListView(APIView):
 
 class EnrollView(APIView):
     def get(self, request, *args, **kwargs):
-        item = get_object_or_404(Post, pk=request.query_params['pk'])
+        item = get_object_or_404(Course, pk=request.query_params['pk'])
         try:
             order_item = OrderItem.objects.filter(
             item=item,

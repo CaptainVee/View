@@ -4,7 +4,7 @@ from rest_framework.serializers import (
 	HyperlinkedModelSerializer,
 	SerializerMethodField)
 from rest_framework import fields
-from .models import Post, Lesson, OrderItem, Order, TAGS, LABEL_CHOICES
+from .models import Course, Lesson, OrderItem, Order, Reviews, TAGS, STATUS
 from django.contrib.auth.models import User
 from rest_framework import fields, serializers
 
@@ -13,22 +13,35 @@ class CourseListSerializer(ModelSerializer):
 	author = SerializerMethodField()
 	author_profile = HyperlinkedIdentityField(view_name='profile', lookup_field='pk')
 	class Meta:
-		model = Post
+		model = Course
 		fields = (
-			'url','title', 'content', 'author', 'price', 'image', 'tags', 'author_profile'
+			'url','title', 'caption', 'author', 'price', 'cover_photo', 'tags', 'author_profile'
 			)
 	def get_author(self, obj):
-		return (obj.author.user.username)
-
+		return (obj.author.username)
 
 class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
 	tags = fields.MultipleChoiceField(TAGS)
+	lessons = SerializerMethodField()
+	reviews = SerializerMethodField()
 	author = serializers.PrimaryKeyRelatedField(read_only=True)
 	class Meta:
-		model = Post
+		model = Course
 		fields = (
-		'title', 'content', 'price', 'image', 'author', 'tags'
+		'title', 'caption', 'price', 'cover_photo', 'author', 'tags', 'reviews', 'lessons'
 		)
+
+	def get_lessons(self, obj):
+		review_queryset = Lesson.objects.filter(course=obj.id)
+		# first_lesson = review_queryset.first()
+		lesson = LessonSerializer(review_queryset, many=True).data
+		return lesson[0], lesson[1]
+
+	def get_reviews(self, obj):
+		# to get all the reviews on the course
+		review_queryset = Reviews.objects.filter(course=obj.id)
+		reviews = ReviewSerializer(review_queryset, many=True).data
+		return reviews
 
 class LessonSerializer(ModelSerializer):
 	class Meta:
@@ -43,12 +56,13 @@ class OrderSerializer(ModelSerializer):
 		fields = (
 			'user', 'ordered', 'items',
 			)
-# class PostSerializer(ModelSerializer):
-# 	class Meta:
-# 		model = Post
-# 		fields = (
-# 			'title'
-# 			)	
+
+class ReviewSerializer(ModelSerializer):
+	class Meta:
+		model = Reviews
+		fields = (
+			'updated_at', 'course', 'body', 'created_by'
+			)	
 
 class OrderItemSerializer(ModelSerializer):
 	class Meta:

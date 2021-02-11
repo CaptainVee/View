@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
-from user.models import Profile
+# from user.models import Profile
 from django.db.models.signals import post_save
 from django.db.models import Sum
 from django.shortcuts import reverse
@@ -20,10 +20,10 @@ TAGS = (
     (6, 'Cloud')
 )
 
-LABEL_CHOICES = (
-    ('P', 'Best-seller'),
-    ('S', 'secondary'),
-    ('D', 'danger')
+STATUS = (
+    ('S', 'Private'),
+    ('P', 'Public'),
+    ('I', 'In_progress')
 )
 
 ADDRESS_CHOICES = (
@@ -31,15 +31,15 @@ ADDRESS_CHOICES = (
     ('S', 'Shipping'),
 )
 
-class Post(models.Model):
+class Course(models.Model):
 	title = models.CharField(max_length=150 )
-	course_type = models.CharField(choices=LABEL_CHOICES, max_length=1)
-	tags = MultiSelectField(choices=TAGS, max_length=2)
+	course_type = models.CharField(choices=STATUS, max_length=1)
+	tags = MultiSelectField(choices=TAGS, max_length=6)
 	content = models.TextField()
 	caption = models.CharField(max_length=300)
 	created_at = models.DateTimeField(default=timezone.now)
-	updated_at = models.DateTimeField()
-	author = models.ForeignKey(Profile, on_delete= models.CASCADE)
+	updated_at = models.DateTimeField(default=timezone.now)
+	author = models.ForeignKey(User, on_delete= models.CASCADE)
 	price = models.FloatField()
 	free = models.BooleanField(default=False)
 	discount_price = models.FloatField(blank=True, null=True)
@@ -51,27 +51,40 @@ class Post(models.Model):
 		return self.title
 
 	def get_absolute_url(self):
-		return reverse('post-detail', kwargs={'pk' : self.pk}) #also known as product
+		return reverse('course-detail', kwargs={'pk' : self.pk}) #also known as product
 
 	def get_add_to_cart_url(self):
 		return reverse("add-to-cart", kwargs={'pk': self.pk})
 
 	def get_remove_from_cart_url(self):
 		return reverse("remove-from-cart", kwargs={'pk': self.pk})
+
 	@property
 	def lessons(self):
-		return self.lesson_set.all().order_by('position')
+		instance = self
+		qs = Lesson.objects.filter(instance)
+		return qs
 
-# class CourseMeta(models.Model):
-# 	pass
+	@property
+	def reviews(self):
+		instance = self
+		qs = Reviews.objects.filter(instance)
+		return qs
+
+class CourseMeta(models.Model):
+	course = models.ForeignKey(Course, on_delete=models.CASCADE)
+	course_aim = models.TextField()
+	course_requirements = models.TextField()
+	audience = models.TextField()
 
 # class CourseConfig(models.Model):
 # 	pass
 
 class Lesson(models.Model):
 	title = models.CharField(max_length=120)
-	course = models.ForeignKey(Post, on_delete=models.CASCADE)
-	video = models.FileField(default='default.mp4', upload_to='videos/')
+	course = models.ForeignKey(Course, on_delete=models.CASCADE)
+	video = models.FileField(blank=True, upload_to='videos/', )
+	documents = models.FileField(blank=True, upload_to='documents/')
 	position = models.IntegerField()
 	description = models.TextField()
 
@@ -96,7 +109,9 @@ class Reviews(models.Model):
 	created_at = models.DateTimeField(default=timezone.now)
 	created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 	updated_at = models.DateTimeField()
+	course = models.ForeignKey(Course, on_delete=models.CASCADE)
 	body = models.TextField()
+	# likes = models.ManyToManyField(User, blank=True, )
 
 	def __str__(self):
 		return self.created_by.username
@@ -107,7 +122,7 @@ class Reviews(models.Model):
 class OrderItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ordered = models.BooleanField(default=False)
-    item = models.ForeignKey(Post, on_delete=models.CASCADE)
+    item = models.ForeignKey(Course, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 
     def __str__(self):
@@ -170,4 +185,4 @@ class Address(models.Model):
 #         userprofile = UserProfile.objects.create(user=instance)
 
 
-# post_save.connect(userprofile_receiver, sender=User)
+# course_save.connect(userprofile_receiver, sender=User)

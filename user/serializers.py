@@ -8,8 +8,7 @@ from rest_framework.serializers import (
 
 from django.contrib.auth.models import User
 from user.models import Profile
-# from courses.models import Post
-# from courses.serializers import PostSerializer
+from courses.models import Course
 # from rest_framework.response import Response
 
 
@@ -17,11 +16,11 @@ from user.models import Profile
 class UserDetailSerializer(ModelSerializer):
 	user = SerializerMethodField()
 	email = SerializerMethodField()
-	# courses = SerializerMethodField()
+	courses = SerializerMethodField()
 
 	class Meta:		
 		model = Profile
-		fields = ('user', 'image', 'email', 'is_instructor')
+		fields = ('user', 'image', 'email', 'phone', 'gender', 'courses','is_instructor')
 
 	def get_user(self, obj):
 		return (obj.user.username)
@@ -29,13 +28,10 @@ class UserDetailSerializer(ModelSerializer):
 	def get_email(self, obj):
 		return (obj.user.email)
 
-	# def get_courses(self, obj):
-	# 	post_qs = Profile.objects.filter(user=obj.user)
-	# 	posts = post_qs.first()
-	# 	posts = posts.posts
-	# 	print(posts.first())
-	# 	oo = PostSerializer(posts)
-	# 	return Response(oo.data)
+	def get_courses(self, obj):
+		course_queryset = Course.objects.filter(author=obj.id)
+		courses = UserCourseListSerializer(course_queryset, many=True).data
+		return courses
 
 class StudentDetailSerializer(ModelSerializer):
 	user = SerializerMethodField()
@@ -49,6 +45,14 @@ class StudentDetailSerializer(ModelSerializer):
 
 	def get_email(self, obj):
 		return (obj.user.email)
+
+class UserCourseListSerializer(ModelSerializer):
+	class Meta:
+		# url = HyperlinkedIdentityField(view_name='course-detail', lookup_field='pk')
+		model = Course
+		fields = (
+			'title', 'caption', 'price', 'cover_photo'
+			)
 
 # class UserCreateSerializer(ModelSerializer):
 # 	email = EmailField(label='Email')
