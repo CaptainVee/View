@@ -15,7 +15,7 @@ class CourseListSerializer(ModelSerializer):
 	class Meta:
 		model = Course
 		fields = (
-			'url','title', 'caption', 'author', 'price', 'cover_photo', 'tags', 'author_profile'
+			'url','title', 'caption', 'author', 'price', 'cover_photo', 'tags', 'author_profile', 'average_star_rating'
 			)
 	def get_author(self, obj):
 		return (obj.author.username)
@@ -28,12 +28,11 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = Course
 		fields = (
-		'title', 'caption', 'price', 'cover_photo', 'author', 'tags', 'reviews', 'lessons'
+		'title', 'caption', 'price', 'cover_photo', 'author', 'tags', 'reviews', 'lessons', 'average_star_rating'
 		)
 
 	def get_lessons(self, obj):
 		review_queryset = Lesson.objects.filter(course=obj.id)
-		# first_lesson = review_queryset.first()
 		lesson = LessonSerializer(review_queryset, many=True).data
 		return lesson[0], lesson[1]
 
@@ -42,6 +41,14 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
 		review_queryset = Reviews.objects.filter(course=obj.id)
 		reviews = ReviewSerializer(review_queryset, many=True).data
 		return reviews
+
+class ReviewSerializer(ModelSerializer):
+	class Meta:
+		model = Reviews
+		fields = (
+			'updated_at', 'course', 'body', 'created_by', 'star'
+			)	
+
 
 class LessonSerializer(ModelSerializer):
 	class Meta:
@@ -57,12 +64,6 @@ class OrderSerializer(ModelSerializer):
 			'user', 'ordered', 'items',
 			)
 
-class ReviewSerializer(ModelSerializer):
-	class Meta:
-		model = Reviews
-		fields = (
-			'updated_at', 'course', 'body', 'created_by'
-			)	
 
 class OrderItemSerializer(ModelSerializer):
 	class Meta:

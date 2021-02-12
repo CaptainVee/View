@@ -9,6 +9,8 @@ from django.shortcuts import reverse
 from django_countries.fields import CountryField
 from multiselectfield import MultiSelectField
 from rest_framework import fields
+from django.core.validators import MaxValueValidator, MinValueValidator
+import statistics
 # Create your models here.
 
 TAGS = (
@@ -61,15 +63,24 @@ class Course(models.Model):
 
 	@property
 	def lessons(self):
-		instance = self
-		qs = Lesson.objects.filter(instance)
+		qs = Lesson.objects.filter(course=self)
 		return qs
 
 	@property
 	def reviews(self):
-		instance = self
-		qs = Reviews.objects.filter(instance)
+		qs = Reviews.objects.filter(course=self)
 		return qs
+
+	@property
+	def average_star_rating(self):
+		total = []
+		reviews_queryset = Reviews.objects.filter(course=self)
+		for review in reviews_queryset:
+			total.append(review.star)
+
+		return int(sum(total)/len(total))
+
+
 
 class CourseMeta(models.Model):
 	course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -101,9 +112,6 @@ class Resourse(models.Model):
 	pass
 
 
-
-
-
 class Reviews(models.Model):
 	'''this model is for reviews about the course'''
 	created_at = models.DateTimeField(default=timezone.now)
@@ -111,6 +119,7 @@ class Reviews(models.Model):
 	updated_at = models.DateTimeField()
 	course = models.ForeignKey(Course, on_delete=models.CASCADE)
 	body = models.TextField()
+	star = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], blank=True)
 	# likes = models.ManyToManyField(User, blank=True, )
 
 	def __str__(self):
