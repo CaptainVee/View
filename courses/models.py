@@ -47,19 +47,12 @@ class Course(models.Model):
 	discount_price = models.FloatField(blank=True, null=True)
 	cover_photo = models.ImageField(default='default.jpg', null=True, blank=True)
 
-
-
 	def __str__(self):
 		return self.title
 
 	def get_absolute_url(self):
 		return reverse('course-detail', kwargs={'pk' : self.pk}) #also known as product
 
-	def get_add_to_cart_url(self):
-		return reverse("add-to-cart", kwargs={'pk': self.pk})
-
-	def get_remove_from_cart_url(self):
-		return reverse("remove-from-cart", kwargs={'pk': self.pk})
 
 	@property
 	def lessons(self):
@@ -77,9 +70,10 @@ class Course(models.Model):
 		reviews_queryset = Reviews.objects.filter(course=self)
 		for review in reviews_queryset:
 			total.append(review.star)
-
-		return int(sum(total)/len(total))
-
+		if len(total) > 0:
+			return int(sum(total)/len(total))
+		else:
+			return 0
 
 
 class CourseMeta(models.Model):
@@ -103,7 +97,6 @@ class Lesson(models.Model):
 		return self.title
 
 	def get_absolute_url(self):
-
 		return reverse('lesson-detail',
 			kwargs={'course_pk':self.course.pk, 'lesson_pk':self.pk})
 
@@ -188,10 +181,3 @@ class Address(models.Model):
 
 	class Meta:
 	    verbose_name_plural = 'Addresses'
-
-# def userprofile_receiver(sender, instance, created, *args, **kwargs):
-#     if created:
-#         userprofile = UserProfile.objects.create(user=instance)
-
-
-# course_save.connect(userprofile_receiver, sender=User)

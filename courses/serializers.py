@@ -15,8 +15,18 @@ class CourseListSerializer(ModelSerializer):
 	class Meta:
 		model = Course
 		fields = (
-			'url','title', 'caption', 'author', 'price', 'cover_photo', 'tags', 'author_profile', 'average_star_rating'
+			'url',
+			'title',
+			'tags',
+			'price',
+			'author',
+			'caption',
+			'course_type',
+			'cover_photo',
+			'author_profile',
+			'average_star_rating'
 			)
+
 	def get_author(self, obj):
 		return (obj.author.username)
 
@@ -24,11 +34,21 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
 	tags = fields.MultipleChoiceField(TAGS)
 	lessons = SerializerMethodField()
 	reviews = SerializerMethodField()
-	author = serializers.PrimaryKeyRelatedField(read_only=True)
+	author = SerializerMethodField()
+	# author = serializers.PrimaryKeyRelatedField(read_only=True)
 	class Meta:
 		model = Course
 		fields = (
-		'title', 'caption', 'price', 'cover_photo', 'author', 'tags', 'reviews', 'lessons', 'average_star_rating'
+		'title',
+		'price',
+		'tags',
+		'author',
+		'caption',
+		'reviews',
+		'lessons',
+		'course_type',
+		'cover_photo', 
+		'average_star_rating'
 		)
 
 	def get_lessons(self, obj):
@@ -41,6 +61,9 @@ class CourseDetailSerializer(serializers.HyperlinkedModelSerializer):
 		review_queryset = Reviews.objects.filter(course=obj.id)
 		reviews = ReviewSerializer(review_queryset, many=True).data
 		return reviews
+
+	def get_author(self, obj):
+		return (obj.author.username)
 
 class ReviewSerializer(ModelSerializer):
 	class Meta:
