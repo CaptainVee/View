@@ -36,7 +36,7 @@ urlpatterns = [
     path('api/profile/<int:pk>/', UserDetailView.as_view(), name='profile'),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
-    # path('api/register/', UserCreateView.as_view(), name='register'),
+    # path('api/register/', UserCreateView, name='register'),
 
 ]
 

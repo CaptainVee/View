@@ -10,6 +10,7 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 from .models import Profile
 
+
 from rest_framework.generics import (
     ListAPIView,
     CreateAPIView,
@@ -19,13 +20,13 @@ from rest_framework.generics import (
     )
 
 from .serializers import (  
-  # UserCreateSerializer,
+  # RegisterSerializer,
   # UserLoginSerializer,
   UserDetailSerializer,
   StudentDetailSerializer)
 
-# class UserCreateView(CreateAPIView):
-# 	serializer_class = UserCreateSerializer
+# class UserCreateView(RegisterSerializer):
+# 	serializer_class = RegisterSerializer
 # 	queryset = User.objects.all()
 
 # class UserLoginView(APIView):

@@ -77,7 +77,7 @@ class LessonSerializer(ModelSerializer):
 	class Meta:
 		model = Lesson
 		fields = (
-			'title', 'course', 'video', 'position', 'description'
+			'title', 'course', 'video', 'position', 'description', 'documents'
 			)
 
 class OrderSerializer(ModelSerializer):

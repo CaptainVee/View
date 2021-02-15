@@ -176,6 +176,8 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': ('rest_framework.schemas.coreapi.AutoSchema'),
 }
 
+# REST_AUTH_REGISTER_SERIALIZERS = { 'REGISTER_SERIALIZER': 'user.serializers.RegisterSerializer', }
+
 
 SITE_ID = 1
 
