@@ -21,6 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_swagger.views import get_swagger_view
+from rest_auth import views as rest_view
 
 
 
@@ -28,14 +29,28 @@ from rest_framework_swagger.views import get_swagger_view
 urlpatterns = [
     path('', include('courses.urls')),
     path('api/docs/', get_swagger_view(title='Tollgator')),
-    # path('api-auth/', include('rest_framework.urls')),
     path('rest-auth/', include('rest_auth.urls')),
-    # path('api/login/', obtain_auth_token, name='obtain-token'),
-    # path('api/login2/', UserLoginView.as_view(), name='login2'),
     path('admin/', admin.site.urls),
     path('api/profile/<int:pk>/', UserDetailView.as_view(), name='profile'),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
+    
+    path('password-reset-confirm/<uidb64>/<token>/',
+    rest_view.PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
+
+
+
+
+    # path('api-auth/', include('rest_framework.urls')),
+    # path('api/login/', obtain_auth_token, name='obtain-token'),
+    # path('api/login2/', UserLoginView.as_view(), name='login2'),
+    # path('password-reset/', rest_view.PasswordResetView.as_view(template_name='user/password_reset.html'), 
+    #     name='password_reset'),
+    # path('password-reset-complete/', rest_view.PasswordResetCompleteView.as_view(template_name='user/password_reset_complete.html'), 
+    #     name='password_reset_complete'),
+    # path('password-reset/done/', 
+    #     rest_view.PasswordResetDoneView.as_view(template_name='user/password_reset_done.html'), 
+    #     name='password_reset_done'),
     # path('api/register/', UserCreateView, name='register'),
 
 ]
